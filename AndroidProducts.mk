@@ -14,4 +14,7 @@
 # limitations under the License.
 
 PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/lineage_gts4lv.mk
+    $(LOCAL_DIR)/omni_gts4lv.mk
+
+COMMON_LUNCH_CHOICES := \
+    omni_gts4lv-eng
