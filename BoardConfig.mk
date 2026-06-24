@@ -1,43 +1,95 @@
-#
-# Copyright (C) 2020-2021 The LineageOS Project
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# Architecture
+TARGET_ARCH := arm64
+TARGET_ARCH_VARIANT := armv8-a
+TARGET_CPU_ABI := arm64-v8a
+TARGET_CPU_ABI2 :=
+TARGET_CPU_VARIANT := kryo300
 
-# inherit from common gts4lv-common
--include device/samsung/gts4lv-common/BoardConfigCommon.mk
+TARGET_2ND_ARCH := arm
+TARGET_2ND_ARCH_VARIANT := armv8-a
+TARGET_2ND_CPU_ABI := armeabi-v7a
+TARGET_2ND_CPU_ABI2 := armeabi
+TARGET_2ND_CPU_VARIANT := cortex-a73
+TARGET_USES_64_BIT_BINDER := true
 
-DEVICE_PATH := device/samsung/gts4lv
+# Bootloader
+TARGET_NO_BOOTLOADER := true
+TARGET_BOOTLOADER_BOARD_NAME := sdm710
 
-# Assert
-TARGET_OTA_ASSERT_DEVICE := gts4lv
+# Platform
+TARGET_BOARD_PLATFORM := sdm710
 
-# Board
-TARGET_BOARD_NAME := SRPRL03A001
-
-# HIDL
-DEVICE_FRAMEWORK_MANIFEST_FILE := $(DEVICE_PATH)/framework_manifest.xml
-DEVICE_MANIFEST_FILE += $(DEVICE_PATH)/manifest.xml
-
-# Kernel
+# Kernel - build from source
+TARGET_KERNEL_SOURCE := kernel/samsung/sdm670
 TARGET_KERNEL_CONFIG := gts4lv_defconfig
-BOARD_MKBOOTIMG_ARGS += --board $(TARGET_BOARD_NAME)
+BOARD_KERNEL_IMAGE_NAME := Image.gz-dtb
 
-# Properties
-TARGET_VENDOR_PROP += $(DEVICE_PATH)/vendor.prop
+BOARD_BOOT_HEADER_VERSION := 1
+BOARD_KERNEL_BASE := 0x00000000
+BOARD_KERNEL_PAGESIZE := 4096
+BOARD_KERNEL_OFFSET := 0x00008000
+BOARD_RAMDISK_OFFSET := 0x02000000
+BOARD_KERNEL_TAGS_OFFSET := 0x01E00000
+BOARD_KERNEL_SEPARATED_DTBO := true
 
-# RIL
-BOARD_PROVIDES_LIBRIL := true
-ENABLE_VENDOR_RIL_SERVICE := true
+BOARD_KERNEL_CMDLINE := androidboot.hardware=qcom video=vfb:640x400,bpp=32,memsize=3072000 msm_rtb.filter=0x237
+BOARD_KERNEL_CMDLINE += ehci-hcd.park=3 lpm_levels.sleep_disabled=1 service_locator.enable=1 swiotlb=1
+BOARD_KERNEL_CMDLINE += androidboot.vbmeta.avb_version=1.0 androidboot.selinux=permissive
 
-# inherit from the proprietary version
-include vendor/samsung/gts4lv/BoardConfigVendor.mk
+BOARD_MKBOOTIMG_ARGS := --kernel_offset $(BOARD_KERNEL_OFFSET) \
+                        --ramdisk_offset $(BOARD_RAMDISK_OFFSET) \
+                        --tags_offset $(BOARD_KERNEL_TAGS_OFFSET)
+BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOT_HEADER_VERSION)
+
+# Partitions
+BOARD_BOOTIMAGE_PARTITION_SIZE     := 67108864
+BOARD_RECOVERYIMAGE_PARTITION_SIZE := 67108864
+BOARD_CACHEIMAGE_PARTITION_SIZE    := 209715200
+BOARD_SYSTEMIMAGE_PARTITION_SIZE   := 3036676096
+BOARD_USERDATAIMAGE_PARTITION_SIZE := 21474820096
+BOARD_FLASH_BLOCK_SIZE             := 131072
+
+# System as root (Samsung A11 style)
+BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
+BOARD_ROOT_EXTRA_FOLDERS := firmware
+
+# Recovery DTBO
+BOARD_INCLUDE_RECOVERY_DTBO := true
+
+# Filesystem
+TARGET_RECOVERY_PIXEL_FORMAT := BGRA_8888
+TARGET_USERIMAGES_USE_EXT4 := true
+TARGET_USERIMAGES_USE_F2FS := true
+
+# Android 11 metadata partition
+BOARD_USES_METADATA_PARTITION := true
+
+# Security patch spoofing (keeps recovery happy)
+PLATFORM_VERSION := 16.1.0
+PLATFORM_SECURITY_PATCH := 2025-12-31
+VENDOR_SECURITY_PATCH := 2025-12-31
+
+# TWRP flags
+RECOVERY_SDCARD_ON_DATA := true
+TARGET_RECOVERY_QCOM_RTC_FIX := true
+TW_BRIGHTNESS_PATH := "/sys/class/backlight/panel0-backlight/brightness"
+TW_EXCLUDE_DEFAULT_USB_INIT := true
+TW_EXTRA_LANGUAGES := true
+TW_HAS_DOWNLOAD_MODE := true
+TW_INCLUDE_CRYPTO := true
+TW_INCLUDE_NTFS_3G := true
+TW_INPUT_BLACKLIST := "hbtp_vm"
+TW_MAX_BRIGHTNESS := 255
+TW_DEFAULT_BRIGHTNESS := 150
+TW_NO_REBOOT_BOOTLOADER := true
+TW_ROTATION := 270
+TW_SCREEN_BLANK_ON_BOOT := true
+TW_THEME := portrait_hdpi
+TW_USE_TOOLBOX := true
+
+# OrangeFox flags
+OF_SCREEN_H := 2560
+OF_STATUS_H := 80
+OF_USE_MAGISKBOOT := 1
+OF_DYNAMIC_SAMSUNG_FIX := 1
+OF_NO_TREBLE_COMPATIBILITY_CHECK := 1
