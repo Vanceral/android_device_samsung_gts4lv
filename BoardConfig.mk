@@ -51,7 +51,7 @@ BOARD_FLASH_BLOCK_SIZE             := 131072
 
 # System as root (Samsung A11 style)
 BOARD_BUILD_SYSTEM_ROOT_IMAGE := false
-BOARD_ROOT_EXTRA_FOLDERS := firmware
+BOARD_ROOT_EXTRA_FOLDERS := firmware vendor
 
 # Recovery DTBO
 BOARD_INCLUDE_RECOVERY_DTBO := true
